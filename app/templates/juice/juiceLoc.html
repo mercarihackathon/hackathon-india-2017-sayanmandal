@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>JuiceLoc</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+    
+      #map {
+        height: 80%;
+      }
+
+
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <style>
+    .button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+  </style>
+  <style>
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    /* The Close Button */
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+  </style>
+  </head>
+  <body background="/static/thor_1.jpeg">
+    <button type="button" class="button" onclick="getcharging()">Available Charging Points</button>
+    <button type="button" class="button" onclick="initMap()">All Charging Points</button>
+    <button type="button" class="button" onclick="updateMap()" id="myBtn">Insert</button>
+    <button type="button" class="button" onclick="updatedMap()">Get Charging Points!</button>
+    <button type="button" class="button" onclick="getDirections()">Direction</button>
+    <!-- The Modal -->
+  <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <form action="/">
+      Longitude:<br>
+      <input type="text" name="Longitude" value="72.8707762">
+      <br>
+      Latitude:<br>
+      <input type="text" name="Latitude" value="19.1034388">
+      <br><br>
+      <input type="file" name="pic" accept="image/*">
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
+    </div>
+
+  </div>
+    <script>
+    // Get the modal
+      var modal = document.getElementById('myModal');
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks the button, open the modal 
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
+    <div id="map"></div>
+    <script>
+    function getDirections(){
+      var directionsService = new google.maps.DirectionsService();
+      var directionsDisplay = new google.maps.DirectionsRenderer();
+      var myLatLng6 = {lat: 19.1049338, lng: 72.8710397};
+      var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png';
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng6,
+        });
+        var marker6 = new google.maps.Marker({
+          position: myLatLng6,
+          map: map,
+          icon:iconBase,
+          title: ''
+        }); 
+
+        var Latlng7 = {lat : 19.1043338, lng : 72.8711497};
+        var marker7 = new google.maps.Marker({
+          position: Latlng7,
+          map: map,
+          title: ''
+        }); 
+      //document.getElementById("myBtn").innerHTML = 'here';
+      directionsDisplay.setMap(map);
+
+      //window.alert('Directions request failed due to ');
+      var start = new google.maps.LatLng(19.1049338, 72.8710397);
+        //var end = new google.maps.LatLng(38.334818, -181.884886);
+      var end = new google.maps.LatLng(19.1043338, 72.8711497);
+      //var bounds = new google.maps.LatLngBounds();
+        /*bounds.extend(start);
+        bounds.extend(end);
+        map.fitBounds(bounds);*/
+
+        var request = {
+            origin: start,
+            destination: end,
+            travelMode: google.maps.TravelMode.WALKING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay.setDirections(response);
+              directionsDisplay.setMap(map);
+          } else {
+              window.alert('Directions request failed due to ' + status);
+          }
+        });
+        
+    }
+    </script>
+    <script>
+      function updatedMap(){
+        var myLatLng = {lat: 19.1034388, lng: 72.8707762};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng
+        });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          title: ''
+        });
+        //19.1039338,72.8711497
+        var myLatLng1 = {lat: 19.1039338, lng: 72.8711497};
+        var marker1 = new google.maps.Marker({
+          position: myLatLng1,
+          map: map,
+          title: ''
+        });
+
+        //19.1039338,72.8711497
+        var myLatLng2 = {lat: 19.1040338, lng: 72.8711497};
+        var marker2 = new google.maps.Marker({
+          position: myLatLng2,
+          map: map,
+          title: ''
+        });
+
+
+        var myLatLng3 = {lat: 19.1042338, lng: 72.8711497};
+        var marker3 = new google.maps.Marker({
+          position: myLatLng3,
+          map: map,
+          title: ''
+        });
+
+
+        var myLatLng4 = {lat: 19.1043338, lng: 72.8711497};
+        var marker4 = new google.maps.Marker({
+          position: myLatLng4,
+          map: map,
+          title: ''
+        }); 
+
+        var myLatLng5 = {lat: 19.1043338, lng: 72.8711397};
+        var marker5 = new google.maps.Marker({
+          position: myLatLng5,
+          map: map,
+          title: ''
+        }); 
+
+        var myLatLng6 = {lat: 19.1035338, lng: 72.8711397};
+        var marker6 = new google.maps.Marker({
+          position: myLatLng6,
+          map: map,
+          title: ''
+        }); 
+
+        var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png';
+
+        var myLatLng7 = {lat: 19.1049338, lng: 72.8710397};
+        var marker7 = new google.maps.Marker({
+          position: myLatLng7,
+          icon:iconBase,
+          map: map,
+          title: ''
+        }); 
+
+
+      }
+    </script>
+    <script>
+      function getcharging(){
+        var myLatLng = {lat: 19.1034388, lng: 72.8707762};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng
+        });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          title: ''
+        });
+
+        var myLatLng2 = {lat: 19.1040338, lng: 72.8711497};
+        var marker2 = new google.maps.Marker({
+          position: myLatLng2,
+          map: map,
+          title: ''
+        });
+
+
+        var myLatLng4 = {lat: 19.1043338, lng: 72.8711497};
+        var marker4 = new google.maps.Marker({
+          position: myLatLng4,
+          map: map,
+          title: ''
+        }); 
+
+        var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png';
+
+        var myLatLng6 = {lat: 19.1049338, lng: 72.8710397};
+        var marker6 = new google.maps.Marker({
+          position: myLatLng6,
+          icon:iconBase,
+          map: map,
+          title: ''
+        }); 
+
+
+      }
+    </script>
+    <script>
+
+      function initMap() {
+        var myLatLng = {lat: 19.1034388, lng: 72.8707762};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng
+        });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          title: ''
+        });
+        //19.1039338,72.8711497
+        var myLatLng1 = {lat: 19.1039338, lng: 72.8711497};
+        var marker1 = new google.maps.Marker({
+          position: myLatLng1,
+          map: map,
+          title: ''
+        });
+
+        //19.1039338,72.8711497
+        var myLatLng2 = {lat: 19.1040338, lng: 72.8711497};
+        var marker2 = new google.maps.Marker({
+          position: myLatLng2,
+          map: map,
+          title: ''
+        });
+
+
+        var myLatLng3 = {lat: 19.1042338, lng: 72.8711497};
+        var marker3 = new google.maps.Marker({
+          position: myLatLng3,
+          map: map,
+          title: ''
+        });
+
+
+        var myLatLng4 = {lat: 19.1043338, lng: 72.8711497};
+        var marker4 = new google.maps.Marker({
+          position: myLatLng4,
+          map: map,
+          title: ''
+        }); 
+
+        var myLatLng5 = {lat: 19.1043338, lng: 72.8711397};
+        var marker5 = new google.maps.Marker({
+          position: myLatLng5,
+          map: map,
+          title: ''
+        }); 
+
+        var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png';
+
+        var myLatLng6 = {lat: 19.1049338, lng: 72.8710397};
+        var marker6 = new google.maps.Marker({
+          position: myLatLng6,
+          icon:iconBase,
+          map: map,
+          title: ''
+        }); 
+
+
+
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCD1UaOmCGuEWnn_ZzBKsBigmU4ueOepvU&callback=initMap">
+    </script>
+  </body>
+</html>
